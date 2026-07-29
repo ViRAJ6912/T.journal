@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Analytics — Trading Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="analytics.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <div class="header-left">
+      <nav class="nav-tabs">
+        <a href="index.html"    class="nav-tab">📈 PnL Calendar</a>
+        <a href="journal.html"  class="nav-tab">📓 Journal</a>
+        <a href="analytics.html" class="nav-tab active">📊 Analytics</a>
+      </nav>
+    </div>
+    <div class="header-right">
+      <select class="filter-select" id="periodSelect">
+        <option value="all">All Time</option>
+        <option value="30">Last 30 Days</option>
+        <option value="90">Last 90 Days</option>
+        <option value="180">Last 180 Days</option>
+        <option value="365">Last Year</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- ── KPI Bar ── -->
+  <section class="stats-panel" id="kpiBar">
+    <div class="stat-card">
+      <span class="stat-label">Total PnL</span>
+      <span class="stat-value" id="kTotal">$0.00</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Win Rate</span>
+      <span class="stat-value" id="kWinRate">0%</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Profit Factor</span>
+      <span class="stat-value" id="kPF">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Avg Win</span>
+      <span class="stat-value green" id="kAvgWin">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Avg Loss</span>
+      <span class="stat-value red" id="kAvgLoss">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Best Trade</span>
+      <span class="stat-value green" id="kBest">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Max Drawdown</span>
+      <span class="stat-value red" id="kDrawdown">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Total Trades</span>
+      <span class="stat-value" id="kCount">0</span>
+    </div>
+  </section>
+
+  <!-- ── Charts Grid ── -->
+  <main class="charts-grid">
+
+    <!-- 1. Cumulative PnL Curve -->
+    <div class="chart-card wide">
+      <div class="chart-card-header">
+        <h3 class="chart-title">Cumulative PnL</h3>
+        <span class="chart-sub" id="cumulSubtitle"></span>
+      </div>
+      <div class="chart-body">
+        <canvas id="chartCumulative"></canvas>
+      </div>
+    </div>
+
+    <!-- 2. Daily PnL Bar -->
+    <div class="chart-card wide">
+      <div class="chart-card-header">
+        <h3 class="chart-title">Daily PnL</h3>
+        <span class="chart-sub">per trading day</span>
+      </div>
+      <div class="chart-body">
+        <canvas id="chartDaily"></canvas>
+      </div>
+    </div>
+
+    <!-- 3. Win / Loss / BE Donut -->
+    <div class="chart-card half">
+      <div class="chart-card-header">
+        <h3 class="chart-title">Outcome Distribution</h3>
+        <span class="chart-sub">Win / Loss / BE</span>
+      </div>
+      <div class="chart-body chart-body-sm">
+        <canvas id="chartOutcome"></canvas>
+      </div>
+    </div>
+
+    <!-- 4. PnL by Symbol -->
+    <div class="chart-card half">
+      <div class="chart-card-header">
+        <h3 class="chart-title">PnL by Symbol</h3>
+        <span class="chart-sub">total per instrument</span>
+      </div>
+      <div class="chart-body chart-body-sm">
+        <canvas id="chartSymbol"></canvas>
+      </div>
+    </div>
+
+    <!-- 5. PnL by Setup / Strategy -->
+    <div class="chart-card half">
+      <div class="chart-card-header">
+        <h3 class="chart-title">PnL by Setup</h3>
+        <span class="chart-sub">strategy breakdown</span>
+      </div>
+      <div class="chart-body chart-body-sm">
+        <canvas id="chartSetup"></canvas>
+      </div>
+    </div>
+
+    <!-- 6. Trade Quality vs PnL scatter -->
+    <div class="chart-card half">
+      <div class="chart-card-header">
+        <h3 class="chart-title">Quality vs PnL</h3>
+        <span class="chart-sub">star rating correlation</span>
+      </div>
+      <div class="chart-body chart-body-sm">
+        <canvas id="chartQuality"></canvas>
+      </div>
+    </div>
+
+    <!-- 7. Long vs Short performance -->
+    <div class="chart-card third">
+      <div class="chart-card-header">
+        <h3 class="chart-title">Long vs Short</h3>
+        <span class="chart-sub">total PnL by direction</span>
+      </div>
+      <div class="chart-body chart-body-sm">
+        <canvas id="chartDirection"></canvas>
+      </div>
+    </div>
+
+    <!-- 8. PnL by Day of Week -->
+    <div class="chart-card third">
+      <div class="chart-card-header">
+        <h3 class="chart-title">Best Day of Week</h3>
+        <span class="chart-sub">avg PnL per weekday</span>
+      </div>
+      <div class="chart-body chart-body-sm">
+        <canvas id="chartWeekday"></canvas>
+      </div>
+    </div>
+
+    <!-- 9. Monthly PnL bar -->
+    <div class="chart-card third">
+      <div class="chart-card-header">
+        <h3 class="chart-title">Monthly PnL</h3>
+        <span class="chart-sub">total per month</span>
+      </div>
+      <div class="chart-body chart-body-sm">
+        <canvas id="chartMonthly"></canvas>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── Empty State ── -->
+  <div class="analytics-empty" id="analyticsEmpty" style="display:none">
+    <div class="empty-icon">📊</div>
+    <p>No trades yet. Add trades in the Journal to see your analytics.</p>
+    <a href="journal.html" class="btn btn-primary" style="margin-top:12px;text-decoration:none">Go to Journal →</a>
+  </div>
+
+  <script src="analytics.js"></script>
+</body>
+</html>
