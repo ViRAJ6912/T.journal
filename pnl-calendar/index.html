@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PnL Calendar</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <nav class="nav-tabs">
+        <a href="index.html" class="nav-tab active">📈 PnL Calendar</a>
+        <a href="journal.html" class="nav-tab">📓 Journal</a>
+        <a href="analytics.html" class="nav-tab">📊 Analytics</a>
+      </nav>
+    </div>
+    <div class="header-right">
+      <button class="btn btn-outline" id="importBtn">⬆ Import</button>
+      <button class="btn btn-outline" id="exportBtn">⬇ Export</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" />
+    </div>
+  </header>
+
+  <!-- Stats Panel -->
+  <section class="stats-panel">
+    <div class="stat-card">
+      <span class="stat-label">Total PnL</span>
+      <span class="stat-value" id="statTotal">$0.00</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Win Rate</span>
+      <span class="stat-value" id="statWinRate">0%</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Winning Days</span>
+      <span class="stat-value green" id="statWinDays">0</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Losing Days</span>
+      <span class="stat-value red" id="statLoseDays">0</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Best Day</span>
+      <span class="stat-value green" id="statBest">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Worst Day</span>
+      <span class="stat-value red" id="statWorst">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Avg Day</span>
+      <span class="stat-value" id="statAvg">$0.00</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Trade Days</span>
+      <span class="stat-value" id="statTradeDays">0</span>
+    </div>
+  </section>
+
+  <!-- Calendar Controls -->
+  <section class="calendar-controls">
+    <button class="nav-btn" id="prevMonth">&#8249;</button>
+    <h2 class="month-title" id="monthTitle">July 2026</h2>
+    <button class="nav-btn" id="nextMonth">&#8250;</button>
+  </section>
+
+  <!-- Calendar Grid -->
+  <section class="calendar-wrapper">
+    <div class="calendar-header-row">
+      <span>Sun</span><span>Mon</span><span>Tue</span>
+      <span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+  </section>
+
+  <!-- Entry Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalDate">July 1, 2026</h3>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="journal-sync-notice" id="journalSyncNotice" style="display:none">
+          <span>📓 This day is synced from your Journal.</span>
+          <a href="journal.html" class="sync-link">Edit in Journal →</a>
+        </div>
+        <div class="input-group">
+          <label>PnL Amount ($)</label>
+          <input type="number" id="pnlInput" placeholder="e.g. 250.00 or -120.50" step="0.01" />
+        </div>
+        <div class="input-group">
+          <label>Notes</label>
+          <textarea id="notesInput" placeholder="Trade notes, strategy used..." rows="3"></textarea>
+        </div>
+        <div class="input-group">
+          <label>Trades Count</label>
+          <input type="number" id="tradesInput" placeholder="Number of trades" min="0" />
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-danger" id="deleteEntry">Delete</button>
+          <button class="btn btn-primary" id="saveEntry">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

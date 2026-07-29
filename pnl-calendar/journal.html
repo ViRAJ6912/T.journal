@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trading Journal</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="journal.css" />
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <div class="header-left">
+      <nav class="nav-tabs">
+        <a href="index.html" class="nav-tab">📈 PnL Calendar</a>
+        <a href="journal.html" class="nav-tab active">📓 Journal</a>
+        <a href="analytics.html" class="nav-tab">📊 Analytics</a>
+      </nav>
+    </div>
+    <div class="header-right">
+      <button class="btn btn-outline" id="importBtn">⬆ Import</button>
+      <button class="btn btn-outline" id="exportBtn">⬇ Export</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" />
+    </div>
+  </header>
+
+  <!-- ── Stats Bar ── -->
+  <section class="stats-panel">
+    <div class="stat-card">
+      <span class="stat-label">Total PnL</span>
+      <span class="stat-value" id="statTotal">$0.00</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Win Rate</span>
+      <span class="stat-value" id="statWinRate">0%</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Total Trades</span>
+      <span class="stat-value" id="statTotal_trades">0</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Avg Win</span>
+      <span class="stat-value green" id="statAvgWin">$0.00</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Avg Loss</span>
+      <span class="stat-value red" id="statAvgLoss">$0.00</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Best Trade</span>
+      <span class="stat-value green" id="statBest">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Worst Trade</span>
+      <span class="stat-value red" id="statWorst">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Profit Factor</span>
+      <span class="stat-value" id="statPF">—</span>
+    </div>
+  </section>
+
+  <!-- ── Quick Add Form ── -->
+  <section class="quick-add-section">
+    <div class="quick-add-card">
+      <h3 class="section-title">
+        <span id="formTitle">+ New Trade</span>
+        <button class="btn-ghost" id="cancelEdit" style="display:none">✕ Cancel</button>
+      </h3>
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Date</label>
+          <input type="date" id="fDate" />
+        </div>
+        <div class="input-group">
+          <label>Symbol</label>
+          <input type="text" id="fSymbol" placeholder="AAPL, BTC, NQ..." autocomplete="off" />
+        </div>
+        <div class="input-group">
+          <label>Direction</label>
+          <div class="toggle-group">
+            <button class="toggle-btn active" data-val="LONG" id="btnLong">▲ Long</button>
+            <button class="toggle-btn" data-val="SHORT" id="btnShort">▼ Short</button>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Entry Price</label>
+          <input type="number" id="fEntry" placeholder="0.00" step="0.01" />
+        </div>
+        <div class="input-group">
+          <label>Exit Price</label>
+          <input type="number" id="fExit" placeholder="0.00" step="0.01" />
+        </div>
+        <div class="input-group">
+          <label>Lot Size <span class="hint">(0.01 = $1/pip)</span></label>
+          <input type="number" id="fQty" placeholder="e.g. 0.01, 0.5, 1.0" step="0.01" min="0" />
+        </div>
+        <div class="input-group">
+          <label>PnL ($) <span class="hint">(auto-calculated)</span></label>
+          <div class="input-with-tag">
+            <input type="number" id="fPnl" placeholder="Auto" step="0.01" />
+            <button class="auto-reset-tag" id="pnlAutoTag" style="display:none" title="Click to revert to auto">manual — reset ↺</button>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Setup / Strategy</label>
+          <input type="text" id="fSetup" placeholder="Breakout, Reversal, Scalp..." />
+        </div>
+        <div class="input-group span2">
+          <label>Notes</label>
+          <textarea id="fNotes" placeholder="What went right? What went wrong? Emotions, mistakes..." rows="2"></textarea>
+        </div>
+        <div class="input-group">
+          <label>
+            Outcome
+            <button class="auto-reset-tag" id="outcomeAutoTag" style="display:none" title="Click to revert to auto">manual — reset ↺</button>
+          </label>
+          <div class="toggle-group">
+            <button class="toggle-btn win-btn" data-outcome="WIN" id="btnWin">✓ Win</button>
+            <button class="toggle-btn loss-btn" data-outcome="LOSS" id="btnLoss">✗ Loss</button>
+            <button class="toggle-btn be-btn active" data-outcome="BE" id="btnBE">~ BE</button>
+          </div>
+        </div>
+        <div class="input-group rating-group">
+          <label>Trade Quality</label>
+          <div class="star-rating" id="starRating">
+            <span class="star" data-v="1">★</span>
+            <span class="star" data-v="2">★</span>
+            <span class="star" data-v="3">★</span>
+            <span class="star" data-v="4">★</span>
+            <span class="star" data-v="5">★</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-footer">
+        <span class="pnl-preview" id="pnlPreview"></span>
+        <button class="btn btn-primary" id="saveTradeBtn">Save Trade</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Filters & Search ── -->
+  <section class="filters-section">
+    <input type="text" class="search-input" id="searchInput" placeholder="🔍  Search symbol, setup, notes..." />
+    <div class="filter-pills">
+      <button class="pill active" data-filter="ALL">All</button>
+      <button class="pill" data-filter="WIN">Wins</button>
+      <button class="pill" data-filter="LOSS">Losses</button>
+      <button class="pill" data-filter="BE">Breakeven</button>
+      <button class="pill" data-filter="LONG">Long</button>
+      <button class="pill" data-filter="SHORT">Short</button>
+    </div>
+    <select class="filter-select" id="sortSelect">
+      <option value="date-desc">Newest first</option>
+      <option value="date-asc">Oldest first</option>
+      <option value="pnl-desc">Best PnL</option>
+      <option value="pnl-asc">Worst PnL</option>
+    </select>
+  </section>
+
+  <!-- ── Trades Table ── -->
+  <section class="table-section">
+    <div class="table-wrapper">
+      <table class="trades-table" id="tradesTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Symbol</th>
+            <th>Dir</th>
+            <th>Entry</th>
+            <th>Exit</th>
+            <th>Lots</th>
+            <th>PnL</th>
+            <th>Setup</th>
+            <th>Quality</th>
+            <th>Outcome</th>
+            <th>Notes</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tradesBody">
+          <!-- rows injected by JS -->
+        </tbody>
+      </table>
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">📓</div>
+        <p>No trades yet. Add your first trade above.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Delete Confirm Modal ── -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3>Delete Trade?</h3>
+        <button class="modal-close" id="deleteModalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-msg">This trade will be permanently removed.</p>
+        <div class="modal-actions">
+          <button class="btn btn-outline" id="cancelDelete">Cancel</button>
+          <button class="btn btn-danger" id="confirmDelete">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast ── -->
+  <div class="toast" id="toast"></div>
+
+  <script src="journal.js"></script>
+</body>
+</html>
